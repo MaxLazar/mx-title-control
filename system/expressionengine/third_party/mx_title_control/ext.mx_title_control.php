@@ -367,7 +367,52 @@ class Mx_title_control_ext
 					if (trim($this->settings['title_pattern_'.$channel_id])  !='')
 					{
 						$out .= 'if ($("#title").val() == "") {$("#title").val("auto_replace");}
-						$("#hold_field_title").hide();';
+								$("#hold_field_title").hide();
+
+                                 var _oldShow = $.fn.show;
+                                 var _oldHide = $.fn.hide;
+
+                                  $.fn.show = function(speed, oldCallback) {
+                                    return $(this).each(function() {
+                                      var obj         = $(this),
+                                          newCallback = function() {
+                                            if ($.isFunction(oldCallback)) {
+                                              oldCallback.apply(obj);
+                                            }
+                                            obj.trigger("afterShow");
+                                          };
+
+                                      // you can trigger a before show if you want
+                                      obj.trigger("beforeShow");
+
+                                      // now use the old function to show the element passing the new callback
+                                      _oldShow.apply(obj, [speed, newCallback]);
+                                    });
+                                  }
+                                  $.fn.hide = function(speed, oldCallback) {
+                                    return $(this).each(function() {
+                                      var obj         = $(this),
+                                          newCallback = function() {
+                                            if ($.isFunction(oldCallback)) {
+                                              oldCallback.apply(obj);
+                                            }
+                                            obj.trigger("afterHide");
+                                          };
+
+                                      // you can trigger a before show if you want
+                                      obj.trigger("beforeHide");
+
+                                      // now use the old function to show the element passing the new callback
+                                      _oldHide.apply(obj, [speed, newCallback]);
+                                    });
+                                  }
+									$("#tools").bind("beforeShow", function() {
+	                                 	$("#hold_field_title").show();
+	                                });
+									$("#tools").bind("beforeHide", function() {
+	                                 	$("#hold_field_title").hide();
+	                                });
+						';
 					}
 				}
 
