@@ -242,6 +242,7 @@ class Mx_title_control_ext
 				 * @author: Nico De Gols (ee-zoo.com)
 				 */
 				unset($meta['author_id']);
+				unset($meta['status']);
 
 				$this->EE->db->where('entry_id', $entry_id);
 				$this->EE->db->update('channel_titles', $meta);
