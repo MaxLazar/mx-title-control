@@ -237,6 +237,11 @@ class Mx_title_control_ext
 					$meta['url_title'] = $this->EE->api_channel_entries->_validate_url_title($url_title_name_out, $meta['title'], true);
 				}
 
+				/*
+				 * Fix for Zoo Visitor conflict where the user is being overwritten with the current logged in member who is editing the profile
+				 * @author: Nico De Gols (ee-zoo.com)
+				 */
+				unset($meta['author_id']);
 
 				$this->EE->db->where('entry_id', $entry_id);
 				$this->EE->db->update('channel_titles', $meta);
