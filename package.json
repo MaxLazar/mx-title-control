@@ -2,7 +2,7 @@
         "schema_version": "1.0",
         "name" : "mx_title_control",
         "label": "MX Title Control",
-        "version": "2.8.4",
+        "version": "2.8.8",
         "types": ["extension"],
         "paths": {
                 "system": [

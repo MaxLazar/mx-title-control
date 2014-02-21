@@ -268,6 +268,8 @@ class Mx_title_control_ext
 
 	function pattern2name($pattern, $entry_id)
 	{
+		$pattern = str_replace('{random_string}', $this->generateRandomString(), $pattern);
+ 		
 		$name = '{exp:channel:entries entry_id="'.$entry_id.'" status="not TYTTOTYESIRACKO" show_future_entries="yes" show_expired="yes"}'.$pattern.'{/exp:channel:entries}';
 		$this->EE->load->library('typography');
 		$this->EE->load->library('template');
@@ -618,7 +620,18 @@ class Mx_title_control_ext
 
 	// END
 
+	function generateRandomString() {
+	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $characters = ($this->EE->config->item('mx_random_string_pattern')) ? $this->EE->config->item('mx_random_string_pattern') : $characters;
 
+	    $randomString = '';
+	    $length = ($this->EE->config->item('mx_random_string_length')) ? $this->EE->config->item('mx_random_string_length') : 10;
+	    
+	    for ($i = 0; $i < $length; $i++) {
+	        $randomString .= $characters[mt_rand(0, strlen($characters) - 1)];
+	    }
+	    return $randomString;
+	}
 
 
 	// --------------------------------
