@@ -43,21 +43,16 @@ class Mx_title_control_ext
 
 	// -------------------------------
 	// Constructor
-	// -------------------------------
-	function Mx_title_control_ext($settings='')
-	{
-		$this->EE =& get_instance();
-		$this->settings = $settings;
-	}
+
 
 	public function __construct($settings=FALSE)
 	{
-		$this->EE =& get_instance();
+		
 
 		// define a constant for the current site_id rather than calling $PREFS->ini() all the time
 		if
 		(defined('SITE_ID') == FALSE)
-			define('SITE_ID', $this->EE->config->item('site_id'));
+			define('SITE_ID', ee()->config->item('site_id'));
 
 		// set the settings for all other methods to access
 		$this->settings = ($settings == FALSE) ? $this->_getSettings() : $this->_saveSettingsToSession($settings);
@@ -72,8 +67,8 @@ class Mx_title_control_ext
 	 **/
 	public function settings_form()
 	{
-		$this->EE->lang->loadfile('mx_title_control');
-		$this->EE->load->model('channel_model');
+		ee()->lang->loadfile('mx_title_control');
+		ee()->load->model('channel_model');
 
 		// Create the variable array
 		$vars = array(
@@ -82,7 +77,7 @@ class Mx_title_control_ext
 			'input_prefix' => __CLASS__,
 			'message' => FALSE,
 			'settings_form' =>FALSE,
-			'channel_data' => $this->EE->channel_model->get_channels()->result(),
+			'channel_data' => ee()->channel_model->get_channels()->result(),
 			'language_packs' => ''
 		);
 
@@ -92,7 +87,7 @@ class Mx_title_control_ext
 		$vars['settings_form'] = TRUE;
 
 		if
-		($new_settings = $this->EE->input->post(__CLASS__))
+		($new_settings = ee()->input->post(__CLASS__))
 		{
 
 			foreach ($vars['channel_data'] as $channel)
@@ -109,7 +104,7 @@ class Mx_title_control_ext
 					if (trim($title_name) != '' or trim($url_title_name))
 					{
 						$meta = array ();
-						$query = $this->EE->db->select('entry_id, title')
+						$query = ee()->db->select('entry_id, title')
 						->where('channel_id', $channel->channel_id)
 						->get('channel_titles');
 
@@ -130,21 +125,21 @@ class Mx_title_control_ext
 									$url_title_name_out = $this->convert_accented_characters(strtolower($url_title_name_out));
 
 									if
-									(!isset($this->EE->api_channel_entries)):
-										$this->EE->load->library('api');
-									$this->EE->api->instantiate('channel_entries');
+									(!isset(ee()->api_channel_entries)):
+										ee()->load->library('api');
+									ee()->api->instantiate('channel_entries');
 									endif;
 
-									$this->EE->api_channel_entries->entry_id = $row['entry_id'];
-									$this->EE->api_channel_entries->channel_id = $channel->channel_id;
-									$meta['url_title'] = $this->EE->api_channel_entries->_validate_url_title($url_title_name_out, $row['title'], true);
+									ee()->api_channel_entries->entry_id = $row['entry_id'];
+									ee()->api_channel_entries->channel_id = $channel->channel_id;
+									$meta['url_title'] = ee()->api_channel_entries->_validate_url_title($url_title_name_out, $row['title'], true);
 									// echo $meta['url_title']."-<<br/>".$row['title'].'->'.$url_title_name_out.$row['entry_id'];
 
 								}
 
 
-								$this->EE->db->where('entry_id', $row['entry_id']);
-								$this->EE->db->update('channel_titles', $meta);
+								ee()->db->where('entry_id', $row['entry_id']);
+								ee()->db->update('channel_titles', $meta);
 
 
 							}
@@ -158,9 +153,9 @@ class Mx_title_control_ext
 
 			$vars['settings'] = $new_settings;
 			$this->_saveSettingsToDB($new_settings);
-			$vars['message'] = $this->EE->lang->line('extension_settings_saved_success');
+			$vars['message'] = ee()->lang->line('extension_settings_saved_success');
 
-			$this->EE->load->dbforge();
+			ee()->load->dbforge();
 
 			$vars['settings']['max_title'] = ((int)$vars['settings']['max_title'] > 1000 ) ? 1000 :  (int)$vars['settings']['max_title'];
 			// $vars['settings']['max_url_title'] = ((int)$vars['settings']['max_url_title'] > 1000) ? 1000 :  (int)$vars['settings']['max_url_title'];
@@ -178,7 +173,7 @@ class Mx_title_control_ext
 				), */
 			);
 
-			$this->EE->dbforge->modify_column('channel_titles', $fields);
+			ee()->dbforge->modify_column('channel_titles', $fields);
 
 
 		}
@@ -192,9 +187,9 @@ class Mx_title_control_ext
 			$vars['language_packs'] =  $this->language_packs() ;
 		}
 
-		$js = str_replace('"', '\"', str_replace("\n", "", $this->EE->load->view('form_settings', $vars, TRUE)));
+		$js = str_replace('"', '\"', str_replace("\n", "", ee()->load->view('form_settings', $vars, TRUE)));
 
-		return $this->EE->load->view('form_settings', $vars, true);
+		return ee()->load->view('form_settings', $vars, true);
 
 	}
 	// END
@@ -227,14 +222,14 @@ class Mx_title_control_ext
 					$url_title_name_out = $this->convert_accented_characters(strtolower($url_title_name_out));
 
 					if
-					(!isset($this->EE->api_channel_entries)):
-						$this->EE->load->library('api');
-					$this->EE->api->instantiate('channel_entries');
+					(!isset(ee()->api_channel_entries)):
+						ee()->load->library('api');
+					ee()->api->instantiate('channel_entries');
 					endif;
 
 
-					$this->EE->api_channel_entries->entry_id = $entry_id;
-					$meta['url_title'] = $this->EE->api_channel_entries->_validate_url_title($url_title_name_out, $meta['title'], true);
+					ee()->api_channel_entries->entry_id = $entry_id;
+					$meta['url_title'] = ee()->api_channel_entries->_validate_url_title($url_title_name_out, $meta['title'], true);
 				}
 
 				/*
@@ -244,8 +239,8 @@ class Mx_title_control_ext
 				unset($meta['author_id']);
 				unset($meta['status']);
 
-				$this->EE->db->where('entry_id', $entry_id);
-				$this->EE->db->update('channel_titles', $meta);
+				ee()->db->where('entry_id', $entry_id);
+				ee()->db->update('channel_titles', $meta);
 			}
 
 		}
@@ -271,18 +266,18 @@ class Mx_title_control_ext
 		$pattern = str_replace('{random_string}', $this->generateRandomString(), $pattern);
  		
 		$name = '{exp:channel:entries entry_id="'.$entry_id.'" status="not TYTTOTYESIRACKO" show_future_entries="yes" show_expired="yes"}'.$pattern.'{/exp:channel:entries}';
-		$this->EE->load->library('typography');
-		$this->EE->load->library('template');
-		$this->EE->TMPL = new EE_Template;
+		ee()->load->library('typography');
+		ee()->load->library('template');
+		ee()->TMPL = new EE_Template;
 
-		$this->EE->typography->initialize();
-		$this->EE->typography->convert_curly = FALSE;
-		$this->EE->typography->allow_img_url = FALSE;
-		$this->EE->typography->auto_links    = FALSE;
-		$this->EE->typography->encode_email  = FALSE;
-		$this->EE->TMPL->parse($name, FALSE, SITE_ID);
+		ee()->typography->initialize();
+		ee()->typography->convert_curly = FALSE;
+		ee()->typography->allow_img_url = FALSE;
+		ee()->typography->auto_links    = FALSE;
+		ee()->typography->encode_email  = FALSE;
+		ee()->TMPL->parse($name, FALSE, SITE_ID);
 
-		return trim(strip_tags(str_replace(array("\r", "\r\n", "\n\r", "\n"), "", $this->EE->TMPL->parse_globals($this->EE->TMPL->final_template))));
+		return trim(strip_tags(str_replace(array("\r", "\r\n", "\n\r", "\n"), "", ee()->TMPL->parse_globals(ee()->TMPL->final_template))));
 	}
 
 
@@ -295,7 +290,7 @@ class Mx_title_control_ext
 
 		if (isset($this->extensions->extensions['foreign_character_conversion_array']))
 		{
-			$foreign_characters = $this->EE->extensions->call('foreign_character_conversion_array');
+			$foreign_characters = ee()->extensions->call('foreign_character_conversion_array');
 		}
 
 		$i = 0;
@@ -323,22 +318,22 @@ class Mx_title_control_ext
 
 		$out = '';
 
-		if ($this->EE->extensions->last_call !== FALSE)
+		if (ee()->extensions->last_call !== FALSE)
 		{
-			$out = $this->EE->extensions->last_call;
+			$out = ee()->extensions->last_call;
 		}
 
 
-		$this->EE->load->helper('array');
+		ee()->load->helper('array');
 
 		parse_str(parse_url(@$_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $get);
 
-		if (element('D', $get) == 'cp' && element('C', $get) == 'content_publish' && element('M', $get) == 'entry_form' && element('channel_id', $get))
+		if (element('channel_id', $get))
 		{
 
 			$settings =  $this->_getSettings();
 
-			$channel_id = $this->EE->security->xss_clean(element('channel_id', $get));
+			$channel_id = ee()->security->xss_clean(element('channel_id', $get));
 	
 			if  ($channel_id != '')
 			{
@@ -348,16 +343,16 @@ class Mx_title_control_ext
 					$channel_id =  $channel_id;
 				}
 
-				$this->EE->load->helper('string'); 
+				ee()->load->helper('string'); 
 	
-				$lang  = ((string) $this->settings['multilanguage']  == 'y') ?  $this->EE->session->userdata('language') : 'default';
+				$lang  = ((string) $this->settings['multilanguage']  == 'y') ?  ee()->session->userdata('language') : 'default';
 
 				$title = (isset($this->settings['title_'.$lang.'_'.$channel_id])) ? $this->settings['title_'.$lang.'_'.$channel_id]  : '' ;
 				$url_title = (isset($this->settings['url_title_'.$lang.'_'.$channel_id])) ? $this->settings['url_title_'.$lang.'_'.$channel_id]  : '' ;
 				$max_title = (isset($this->settings['max_title'])) ? $this->settings['max_title']  : 100 ;
 				$max_url_title = (isset($this->settings['max_url_title'])) ? $this->settings['max_url_title']  : 75 ;
 
-				$field_exp = reduce_double_slashes($this->EE->config->item('theme_folder_url').'/cp_themes/default/images/field_expand.png');
+				$field_exp = reduce_double_slashes(ee()->config->item('theme_folder_url').'/cp_themes/default/images/field_expand.png');
 
 				if ($url_title  !='')
 				{
@@ -374,7 +369,7 @@ class Mx_title_control_ext
 				{
 					if (trim($this->settings['title_pattern_'.$channel_id])  !='')
 					{
-						$out .= 'if ($("#title").val() == "") {$("#title").val("auto_replace");}
+						$out .= 'if ($("[name=\'title\'").val() == "") {$("[name=\'title\'").val("auto_replace");}
 								$("#hold_field_title").hide();
 
                                  var _oldShow = $.fn.show;
@@ -431,7 +426,7 @@ class Mx_title_control_ext
 						$out .= '$("#hold_field_url_title").hide();';
 					}
 				}
-				//$this->EE->extensions->call('safecracker_submit_entry_start', $this);
+				//ee()->extensions->call('safecracker_submit_entry_start', $this);
 
 				if ($max_title  != 100)
 				{
@@ -456,7 +451,7 @@ class Mx_title_control_ext
 
 		if ( ! isset($languages))
 		{
-			$this->EE->load->helper('directory');
+			ee()->load->helper('directory');
 
 			$source_dir = APPPATH.'language/';
 
@@ -498,9 +493,9 @@ class Mx_title_control_ext
 	{
 		$settings = FALSE;
 		if
-		(isset($this->EE->session->cache[$this->addon_name][__CLASS__]['settings']) === FALSE || $refresh === TRUE)
+		(isset(ee()->session->cache[$this->addon_name][__CLASS__]['settings']) === FALSE || $refresh === TRUE)
 		{
-			$settings_query = $this->EE->db->select('settings')
+			$settings_query = ee()->db->select('settings')
 			->where('enabled', 'y')
 			->where('class', __CLASS__)
 			->get('extensions', 1);
@@ -514,7 +509,7 @@ class Mx_title_control_ext
 		}
 		else
 		{
-			$settings = $this->EE->session->cache[$this->addon_name][__CLASS__]['settings'];
+			$settings = ee()->session->cache[$this->addon_name][__CLASS__]['settings'];
 		}
 		return $settings;
 	}
@@ -531,13 +526,13 @@ class Mx_title_control_ext
 	{
 		// if there is no $sess passed and EE's session is not instaniated
 		if
-		($sess == FALSE && isset($this->EE->session->cache) == FALSE)
+		($sess == FALSE && isset(ee()->session->cache) == FALSE)
 			return $settings;
 
 		// if there is an EE session available and there is no custom session object
 		if
-		($sess == FALSE && isset($this->EE->session) == TRUE)
-			$sess =& $this->EE->session;
+		($sess == FALSE && isset(ee()->session) == TRUE)
+			$sess =& ee()->session;
 
 		// Set the settings in the cache
 		$sess->cache[$this->addon_name][__CLASS__]['settings'] = $settings;
@@ -557,7 +552,7 @@ class Mx_title_control_ext
 	 **/
 	private function _saveSettingsToDB($settings)
 	{
-		$this->EE->db->where('class', __CLASS__)
+		ee()->db->where('class', __CLASS__)
 		->update('extensions', array('settings' => serialize($settings)));
 	}
 	/**
@@ -600,7 +595,7 @@ class Mx_title_control_ext
 
 			$hook = array_merge($hook_template, $data);
 			$hook['settings'] = serialize($hook['settings']);
-			$this->EE->db->query($this->EE->db->insert_string('exp_extensions', $hook));
+			ee()->db->query(ee()->db->insert_string('exp_extensions', $hook));
 		}
 	}
 
@@ -614,7 +609,7 @@ class Mx_title_control_ext
 	 **/
 	private function _deleteHooks()
 	{
-		$this->EE->db->query("DELETE FROM `exp_extensions` WHERE `class` = '".__CLASS__."'");
+		ee()->db->query("DELETE FROM `exp_extensions` WHERE `class` = '".__CLASS__."'");
 	}
 
 
@@ -622,10 +617,10 @@ class Mx_title_control_ext
 
 	function generateRandomString() {
 	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	    $characters = ($this->EE->config->item('mx_random_string_pattern')) ? $this->EE->config->item('mx_random_string_pattern') : $characters;
+	    $characters = (ee()->config->item('mx_random_string_pattern')) ? ee()->config->item('mx_random_string_pattern') : $characters;
 
 	    $randomString = '';
-	    $length = ($this->EE->config->item('mx_random_string_length')) ? $this->EE->config->item('mx_random_string_length') : 10;
+	    $length = (ee()->config->item('mx_random_string_length')) ? ee()->config->item('mx_random_string_length') : 10;
 	    
 	    for ($i = 0; $i < $length; $i++) {
 	        $randomString .= $characters[mt_rand(0, strlen($characters) - 1)];
@@ -651,12 +646,12 @@ class Mx_title_control_ext
 		{
 
 			$this->disable_acc();
-			$this->EE->db->query("UPDATE exp_extensions SET method = 'cp_js_end', hook = 'cp_js_end' WHERE class = '".get_class($this)."'");
+			ee()->db->query("UPDATE exp_extensions SET method = 'cp_js_end', hook = 'cp_js_end' WHERE class = '".get_class($this)."'");
 
 			// Update to next version
 		}
 
-		$this->EE->db->query("UPDATE exp_extensions SET version = '".$this->EE->db->escape_str($this->version)."' WHERE class = '".get_class($this)."'");
+		ee()->db->query("UPDATE exp_extensions SET version = '".ee()->db->escape_str($this->version)."' WHERE class = '".get_class($this)."'");
 	}
 	// END
 
@@ -667,7 +662,7 @@ class Mx_title_control_ext
 	{
 		$accessory = 'Mx_title_control_acc';
 
-		$this->EE->db->delete('accessories', array('class' => $accessory));
+		ee()->db->delete('accessories', array('class' => $accessory));
 	}
 
 
@@ -678,7 +673,7 @@ class Mx_title_control_ext
 
 	function disable_extension()
 	{
-		$this->EE->db->delete('exp_extensions', array('class' => get_class($this)));
+		ee()->db->delete('exp_extensions', array('class' => get_class($this)));
 	}
 	// END
 }
