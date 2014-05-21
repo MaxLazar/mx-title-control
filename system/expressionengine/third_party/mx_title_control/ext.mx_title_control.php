@@ -323,7 +323,8 @@ class Mx_title_control_ext
 			$out = ee()->extensions->last_call;
 		}
 
-
+		$out = '//  THIS IS TEST';
+		
 		ee()->load->helper('array');
 
 		parse_str(parse_url(@$_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $get);
