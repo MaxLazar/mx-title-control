@@ -322,8 +322,6 @@ class Mx_title_control_ext
 		{
 			$out = ee()->extensions->last_call;
 		}
-
-		$out = '//  THIS IS TEST';
 		
 		ee()->load->helper('array');
 
