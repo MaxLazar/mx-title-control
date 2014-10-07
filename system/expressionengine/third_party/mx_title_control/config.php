@@ -2,7 +2,7 @@
 if (! defined('MX_TITLE_CONTROL_KEY'))
 {
 	define('MX_TITLE_CONTROL_NAME', 'MX Title Control');
-	define('MX_TITLE_CONTROL_VER',  '2.9.0');
+	define('MX_TITLE_CONTROL_VER',  '2.9.1');
 	define('MX_TITLE_CONTROL_KEY', 'Mx_title_control');
 	define('MX_TITLE_CONTROL_AUTHOR',  'Max Lazar');
 	define('MX_TITLE_CONTROL_DOCS',  'http://www.eec.ms/add-on/mx-title-control');
