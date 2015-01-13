@@ -239,6 +239,13 @@ class Mx_title_control_ext
 				unset($meta['author_id']);
 				unset($meta['status']);
 
+				/*
+				 * Fix for Low Events conflict where the entry and expiration dates are changed back after LE updated them
+				 * @author: Lodewijk Schutte (gotolow.com)
+				 */
+				unset($meta['entry_date']);
+				unset($meta['expiration_date']);
+
 				ee()->db->where('entry_id', $entry_id);
 				ee()->db->update('channel_titles', $meta);
 			}
