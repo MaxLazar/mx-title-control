@@ -229,6 +229,7 @@ class Mx_title_control_ext
 
 
 					ee()->api_channel_entries->entry_id = $entry_id;
+					ee()->api_channel_entries->channel_id = $channel_id;
 					$meta['url_title'] = ee()->api_channel_entries->_validate_url_title($url_title_name_out, $meta['title'], true);
 				}
 
