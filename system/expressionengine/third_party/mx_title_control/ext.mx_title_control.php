@@ -375,7 +375,7 @@ class Mx_title_control_ext
 				{
 					if (trim($this->settings['title_pattern_'.$channel_id])  !='')
 					{
-						$out .= 'if ($("[name=\'title\'").val() == "") {$("[name=\'title\'").val("auto_replace");}
+						$out .= 'if ($("[name=\'title\']").val() == "") {$("[name=\'title\']").val("auto_replace");}
 								$("#hold_field_title").hide();
 
                                  var _oldShow = $.fn.show;
