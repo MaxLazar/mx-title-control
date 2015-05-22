@@ -436,7 +436,7 @@ class Mx_title_control_ext
 
 				if ($max_title  != 100)
 				{
-					$out .= '$("#title").attr("maxlength", "'.$max_title.'");';
+					$out .= '$("[name=\'title\']").attr("maxlength", "'.$max_title.'");';
 				}
 
 				if ($max_url_title  != 75)
