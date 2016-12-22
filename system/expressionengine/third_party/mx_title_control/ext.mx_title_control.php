@@ -195,8 +195,8 @@ class Mx_title_control_ext
 	// END
 	function entry_submission_end($entry_id, $meta, $data)
 	{
-
 		$channel_id = $meta['channel_id'];
+		$status = isset( $meta['status']) ? $meta['status'] : '';
 
 		if (isset($meta['channel_id']))
 		{
@@ -212,13 +212,13 @@ class Mx_title_control_ext
 
 				if ($title_name)
 				{
-					$title_name_out = $this->pattern2name($title_name, $entry_id);
+					$title_name_out = $this->pattern2name($title_name, $entry_id, $status);
 					$meta['title'] = $title_name_out;
 				}
 
 				if ($url_title_name and ($data['entry_id'] == 0 or ($data['entry_id'] != 0 and $url_title_name_m) ))
 				{
-					$url_title_name_out = ($url_title_name == $title_name) ? $title_name_out : $this->pattern2name($url_title_name, $entry_id);
+					$url_title_name_out = ($url_title_name == $title_name) ? $title_name_out : $this->pattern2name($url_title_name, $entry_id, $status);
 					$url_title_name_out = $this->convert_accented_characters(strtolower($url_title_name_out));
 
 					if
@@ -268,11 +268,14 @@ class Mx_title_control_ext
 		return array_map(array(__CLASS__, 'ord'), $a);
 	}
 
-	function pattern2name($pattern, $entry_id)
+	function pattern2name($pattern, $entry_id, $entry_status="")
 	{
 		$pattern = str_replace('{random_string}', $this->generateRandomString(), $pattern);
+
+		// because channel:entries does not show 'closed' entries when status="not [NON-EXISTING STATUS]" is used 
+		$status = $entry_status == 'closed' ? 'closed' : 'not TYTTOTYESIRACKO';
  		
-		$name = '{exp:channel:entries entry_id="'.$entry_id.'" status="not TYTTOTYESIRACKO" show_future_entries="yes" show_expired="yes"}'.$pattern.'{/exp:channel:entries}';
+		$name = '{exp:channel:entries entry_id="'.$entry_id.'" status="'.$status.'" show_future_entries="yes" show_expired="yes"}'.$pattern.'{/exp:channel:entries}';
 		ee()->load->library('typography');
 		ee()->load->library('template');
 		ee()->TMPL = new EE_Template;
