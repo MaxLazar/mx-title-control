@@ -28,7 +28,7 @@ $lang = array(
 ,'title_pattern' => 'Title Pattern'
 ,'url_title_pattern' => 'URL Title Pattern'
 ,'update_title' => 'Update all entries with new Title?'
-,'update_url_title' => 'Update alL entries with new URL Title?'
+,'update_url_title' => 'Update all entries with new URL Title?'
 
 /* END */
 ,''=>''
